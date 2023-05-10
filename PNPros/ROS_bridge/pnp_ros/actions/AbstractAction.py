@@ -3,7 +3,7 @@ import sys
 import rospy
 import threading
 
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 from pnp_msgs.msg import PNPActionFeedback, PNPResult
 
 try:
@@ -15,7 +15,7 @@ except:
 import pnp_common
 from pnp_common import *
 
-class AbstractAction(ABCMeta):
+class AbstractAction(ABC):
 
     def __init__(self, goalhandler, params):
         self.goalhandler = goalhandler
