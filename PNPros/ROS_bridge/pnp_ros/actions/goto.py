@@ -28,7 +28,7 @@ class goto(AbstractAction):
         # cmdvel Publisher
         self._cmdVelPub = rospy.Publisher("cmd_vel", Twist, latch=True, queue_size=10)
 
-        print "START ACTION GOTO"
+        print("START ACTION GOTO")
 
 
     def _stop_action(self):
@@ -47,7 +47,7 @@ class goto(AbstractAction):
         cmdVel.angular.z = .0
         self._cmdVelPub.publish(cmdVel)
 
-        print "STOP ACTION GOTO"
+        print("STOP ACTION GOTO")
 
     @classmethod
     def is_goal_reached(cls, params):

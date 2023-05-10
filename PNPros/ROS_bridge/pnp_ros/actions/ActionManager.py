@@ -10,7 +10,7 @@ from pnp_msgs.msg import PNPResult, PNPGoal
 try:
     sys.path.append(os.environ["PNP_HOME"] + '/scripts')
 except:
-    print "Please set PNP_HOME environment variable to PetriNetPlans folder."
+    print("Please set PNP_HOME environment variable to PetriNetPlans folder.")
     sys.exit(1)
 
 import pnp_common
@@ -79,12 +79,12 @@ class ActionManager():
                     goal.id : action_instance
                 })
 
-                print "[AM] Starting " + goal.name + " " + goal.params + " " + str(goal.id)
+                print("[AM] Starting " + goal.name + " " + goal.params + " " + str(goal.id))
 
                 # start the action
                 self._action_instances[goal.id].start_action()
             else:
-                print "[AM] Stopping " + goal.name + " " + goal.params + " " + str(goal.id)
+                print("[AM] Stopping " + goal.name + " " + goal.params + " " + str(goal.id))
                 # send the result
                 rospy.set_param(get_robot_key(PARAM_PNPACTIONSTATUS) + goalhandler.get_goal().name, ACTION_SUCCESS)
 
@@ -98,7 +98,7 @@ class ActionManager():
     def interrupt_action(self, goalhandler):
         ''' Action interrupted before it finished the execution '''
         goal = goalhandler.get_goal()
-        print "[AM] Interrupting " + goal.name + " " + goal.params + " " + str(goal.id)
+        print("[AM] Interrupting " + goal.name + " " + goal.params + " " + str(goal.id))
 
         # accept the goal
         goalhandler.set_accepted()
@@ -117,7 +117,7 @@ class ActionManager():
     def end_action(self, goalhandler):
         ''' Action ended its execution (this is called after the action is already finished, why?)'''
         goal = goalhandler.get_goal()
-        print "[AM] Ending " + goal.name + " " + goal.params
+        print("[AM] Ending " + goal.name + " " + goal.params)
 
         # accept the goal
         goalhandler.set_accepted()
@@ -155,7 +155,7 @@ class ActionManager():
             action_class = getattr(import_module(full_name, package=package_name), module_name)
         except (ImportError, AttributeError) as e:
             rospy.logwarn("action " + module_name + " not implemented")
-            print e
+            print(e)
             pass
         except Exception as e:
             rospy.logwarn("Exception instantiating action %s: %s" % (module_name, e))

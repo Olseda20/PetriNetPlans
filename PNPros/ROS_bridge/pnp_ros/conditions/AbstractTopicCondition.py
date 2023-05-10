@@ -3,10 +3,9 @@ from abc import ABCMeta, abstractproperty, abstractmethod
 from AbstractCondition import AbstractCondition, ConditionListener
 
 class AbstractTopicCondition(AbstractCondition):
-    __metaclass__ = ABCMeta
 
     def __init__(self):
-        super(AbstractTopicCondition, self).__init__()
+        super().__init__()
         self.last_value = None
         self.last_data = None
         

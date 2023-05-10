@@ -1,8 +1,7 @@
 import rospy
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 
-class AbstractCondition():
-    __metaclass__ = ABCMeta
+class AbstractCondition(ABC):
 
     def __init__(self):
         self._updates_listeners = []
@@ -16,8 +15,7 @@ class AbstractCondition():
         raise NotImplementedError()
 
 
-class ConditionListener():
-    __metaclass__ = ABCMeta
+class ConditionListener(ABC):
 
     @abstractmethod
     def receive_update(self, condition_name, condition_value):

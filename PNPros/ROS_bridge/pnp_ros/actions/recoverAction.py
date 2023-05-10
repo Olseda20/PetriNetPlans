@@ -54,7 +54,7 @@ class recoverAction(AbstractAction):
         # NOTE: always execute
         #self.confirmed = True
 
-        print "confirmed: ", self.confirmed
+        print("confirmed: ", self.confirmed)
 
         if self.confirmed == True:
             # send failure confirmation

@@ -11,7 +11,7 @@ try:
     sys.path.append(os.environ["PNP_HOME"] + '/actions')
     sys.path.append(os.environ["PNP_HOME"] + '/conditions')
 except:
-    print "Please set PNP_HOME environment variable to PetriNetPlans folder."
+    print("Please set PNP_HOME environment variable to PetriNetPlans folder.")
     sys.exit(1)
 
 from ActionManager import ActionManager

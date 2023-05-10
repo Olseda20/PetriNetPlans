@@ -77,7 +77,7 @@ class PNPCmd_Base(object):
 
     def printindent(self):
         for i in range(self.execlevel):
-            print '    ',
+            print('    ', end="")
 
     def exec_action(self, action, params, interrupt='', recovery=''):
         self.printindent()
@@ -108,7 +108,7 @@ class PNPCmd_Base(object):
                 c, rec = self._check_interrupt_conditions(action)
 
                 time.sleep(0.1)
-            print "   -- action status: %s, interrupt condition: %r" %(r,c)
+            print("   -- action status: %s, interrupt condition: %r" %(r,c))
             run = False  # exit
             if (not c): # normal termination
                 self.printindent()
@@ -130,7 +130,7 @@ class PNPCmd_Base(object):
                 elif p_rec=='fail_plan':
                     self.end()
                 else:
-                    print "[ERROR] The recovery procedure "+ p_rec + " may not be implemented. I am just stopping the current action and continuing with the plan."
+                    print("[ERROR] The recovery procedure "+ p_rec + " may not be implemented. I am just stopping the current action and continuing with the plan.")
         return r
 
     def _check_interrupt_conditions(self, action):

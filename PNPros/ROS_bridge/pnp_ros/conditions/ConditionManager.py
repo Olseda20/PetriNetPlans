@@ -6,6 +6,7 @@ import fnmatch
 
 from AbstractCondition import AbstractCondition, ConditionListener
 from AbstractTopicCondition import AbstractTopicCondition
+from AbstractServiceCondition import AbstractServiceCondition
 from importlib import import_module
 import std_msgs
 
@@ -49,8 +50,9 @@ class ConditionManager(ConditionListener):
 
                         rospy.loginfo("Initialized condition " + module_name)
                     else:
-                        rospy.logwarn("Class " + module_name + " does not inherit from AbstractCondition")
+                        rospy.logwarn("Class " + module_name + " does not inherit from AbstractCondition or is Abstract")
                 except TypeError as e:
+                    rospy.logwarn(e)
                     rospy.logwarn("Class " + module_name + " must inherit from AbstractCondition")
                     pass
 

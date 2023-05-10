@@ -3,10 +3,9 @@ from abc import ABCMeta, abstractproperty
 from AbstractCondition import AbstractCondition, ConditionListener
 
 class AbstractServiceCondition(AbstractCondition):
-    __metaclass__ = ABCMeta
 
     def __init__(self):
-        super(AbstractServiceCondition, self).__init__()
+        super().__init__()
         # create service proxy
         try:
             rospy.wait_for_service(self._service_name, timeout=0.5)

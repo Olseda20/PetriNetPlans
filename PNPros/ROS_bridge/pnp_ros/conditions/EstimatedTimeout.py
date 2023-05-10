@@ -35,7 +35,7 @@ class EstimatedTimeout(AbstractServiceCondition):
 
                 # check timeout expiration
                 if time_passed.to_sec() > estimate_timeout.to_sec() + self._ADDITIVE_CONSTANT_TIMEOUT.to_sec():
-                    print current_node, target_node
+                    print(current_node, target_node)
                     return True
         else:
             rospy.logwarn("The current goal is not a navigation goal, not timeout estimate")

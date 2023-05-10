@@ -43,8 +43,8 @@ class saveTrajectory(AbstractAction):
                     X.append(pickle.load(open(filepath, "rb")))
         Y = [1] * len(X) + [0] * len(negX); Y = np.array(Y); Y.shape = (len(Y), 1)
         X += negX; X = np.array(X)
-        print "INPUT DATA SIZE: ", X.shape
-        print "OUTPUT DATA SIZE: ", Y.shape
+        print("INPUT DATA SIZE: ", X.shape)
+        print("OUTPUT DATA SIZE: ", Y.shape)
 
         # define model
         multiLS = False
@@ -59,8 +59,8 @@ class saveTrajectory(AbstractAction):
 
         # optimize model
         model.optimize()
-        print "saveTrajectory"
-        print model
+        print("saveTrajectory")
+        print(model)
 
         ## save model
         folder = '%s/catkin_ws/data/GPmodels'  % os.path.expanduser("~")
