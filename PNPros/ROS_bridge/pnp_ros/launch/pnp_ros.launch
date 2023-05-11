@@ -1,13 +1,15 @@
 <launch>
   <arg name="current_plan" default="stop" />
-  <arg name="plan_folder" default="$(find pnp_ros)/plans" />
+  <arg name="plans_folder" default="$(find pnp_ros)/plans" />
+  <arg name="actions_folder" default="$(find pnp_ros)/actions" />
+  <arg name="conditions_folder" default="$(find pnp_ros)/coditions" />
 
   <node
     name="pnp_ros"
     pkg="pnp_ros" type="pnp_node"
     respawn="false" output="screen">
       <param name="current_plan" value="$(arg current_plan)" />
-      <param name="plan_folder" value="$(arg plan_folder)" />
+      <param name="plans_folder" value="$(arg plans_folder)" />
       <param name="learning" value="false" />
       <param name="autorestart" value="false" />
       <param name="use_java_connection" value="false" />
@@ -17,6 +19,8 @@
     name="PNPActionServer"
     pkg="pnp_ros" type="PNPActionServer.py"
     respawn="false" output="screen">
+      <param name="actions_folder" value="$(arg actions_folder)" />
+      <param name="conditions_folder" value="$(arg conditions_folder)" />
   </node>
 
   <!-- <node

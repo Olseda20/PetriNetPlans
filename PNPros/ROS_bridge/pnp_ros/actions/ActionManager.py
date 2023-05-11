@@ -3,7 +3,7 @@ import sys
 import rospy
 import inspect
 import fnmatch
-from importlib import import_module
+from importlib import util
 from AbstractAction import AbstractAction
 from pnp_msgs.msg import PNPResult, PNPGoal
 
@@ -18,11 +18,11 @@ from pnp_common import *
 
 class ActionManager():
 
-    def __init__(self):
+    def __init__(self, actions_folder=None):
         self._action_instances = {}
         self._implemented_actions = []
 
-        actions_found = self._search_actions()
+        actions_found = self._search_actions(actions_folder)
 
         for action_class in actions_found:
             self._implemented_actions.append(action_class)
@@ -31,16 +31,22 @@ class ActionManager():
         self._interrupted_goal_publisher = rospy.Publisher('interrupted_goal', PNPGoal, queue_size=10, latch=True)
 
     @staticmethod
-    def _search_actions():
+    def _search_actions(actions_folder):
         actions_found = []
         # Find all the actions implemented
         directory = os.path.dirname(os.path.abspath(__file__))
-        for file in [os.path.join(dirpath, f)
+        potential_files = [os.path.join(dirpath, f)
                     for dirpath, _, files in os.walk(directory, followlinks=True)
-                    for f in fnmatch.filter(files, '*.py')]:
+                    for f in fnmatch.filter(files, '*.py')]
+        if actions_folder is not None:
+            potential_files += [os.path.join(dirpath, f)
+                    for dirpath, _, files in os.walk(actions_folder, followlinks=True)
+                    for f in fnmatch.filter(files, '*.py')]
+        rospy.logwarn("actions" + str(potential_files))
+        for file in potential_files:
             module_name = os.path.splitext(os.path.basename(file))[0]
             package_name = os.path.dirname(os.path.relpath(file, directory)).replace("/", ".")
-            action_class = ActionManager._find_action_implementation(package_name, module_name)
+            action_class = ActionManager._find_action_implementation(file, module_name)
             if action_class:
                 actions_found.append(action_class)
                 rospy.loginfo("Found implemented action " + module_name)
@@ -145,14 +151,14 @@ class ActionManager():
             return False
 
     @staticmethod
-    def _find_action_implementation(package_name, module_name):
+    def _find_action_implementation(file, module_name):
         # action_class = getattr(import_module(action_name), action_name)
-        try:
-            if package_name == "":
-                full_name = module_name
-            else:
-                full_name = package_name + "." + module_name
-            action_class = getattr(import_module(full_name, package=package_name), module_name)
+        try:            
+            spec = util.spec_from_file_location(module_name, file)
+            module = util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            
+            action_class = getattr(module, module_name)
         except (ImportError, AttributeError) as e:
             rospy.logwarn("action " + module_name + " not implemented")
             print(e)

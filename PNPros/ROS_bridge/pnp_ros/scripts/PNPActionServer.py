@@ -90,8 +90,11 @@ if __name__ == '__main__':
     rospy.init_node(NODE)
     rospy.set_param('robot_name', 'dummy')
 
-    conditionManager = ConditionManager()
-    actionManager = ActionManager()
+    actions_folder = rospy.get_param("~actions_folder")
+    conditions_folder = rospy.get_param("~conditions_folder")
+
+    conditionManager = ConditionManager(conditions_folder)
+    actionManager = ActionManager(actions_folder)
 
     # Service which returns truth value of condition
     rospy.Service(SRV_PNPCONDITIONEVAL,

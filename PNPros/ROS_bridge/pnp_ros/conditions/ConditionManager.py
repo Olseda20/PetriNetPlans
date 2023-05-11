@@ -5,23 +5,27 @@ import inspect
 import fnmatch
 
 from AbstractCondition import AbstractCondition, ConditionListener
-from AbstractTopicCondition import AbstractTopicCondition
-from AbstractServiceCondition import AbstractServiceCondition
-from importlib import import_module
+from importlib import util
 import std_msgs
 
 class ConditionManager(ConditionListener):
 
 
-    def __init__(self):
+    def __init__(self, conditions_folder=None):
         self.blacklisted_conditions = ["LaserScan", "Twist", "Pose"]
         self._condition_instances = {}
 
-        # Initialize all the classes in current folder which implement AbstractCondition
+        # Initialize all the classes in current folder + the conditions_folder which implement AbstractCondition
         directory = os.path.dirname(os.path.abspath(__file__))
-        for file in [os.path.join(dirpath, f)
+        potential_files = [os.path.join(dirpath, f)
                     for dirpath, _, files in os.walk(directory, followlinks=True)
-                    for f in fnmatch.filter(files, '*.py')]:
+                    for f in fnmatch.filter(files, '*.py')]
+        if conditions_folder is not None:
+            potential_files += [os.path.join(dirpath, f)
+                        for dirpath, _, files in os.walk(conditions_folder, followlinks=True)
+                        for f in fnmatch.filter(files, '*.py')]
+        rospy.logwarn("conditions" + str(potential_files))
+        for file in potential_files:
         # for file in glob.glob(os.path.join(os.path.dirname(os.path.abspath(__file__)), "*.py")):
 
             module_name = os.path.splitext(os.path.basename(file))[0]
@@ -29,13 +33,13 @@ class ConditionManager(ConditionListener):
             if module_name in self.blacklisted_conditions:
                 continue
 
-            package_name = os.path.dirname(os.path.relpath(file, directory)).replace("/", ".")
             try:
-                if package_name == "":
-                    full_name = module_name
-                else:
-                    full_name = package_name + "." + module_name
-                condition_class = getattr(import_module(full_name, package=package_name), module_name)
+                spec = util.spec_from_file_location(module_name,file)
+                module = util.module_from_spec(spec)
+                spec.loader.exec_module(module)
+                
+                condition_class = getattr(module, module_name)
+                # condition_class = getattr(import_module(full_name, package=""), module_name)
             except (ImportError, AttributeError) as e:
                 continue
             else:
