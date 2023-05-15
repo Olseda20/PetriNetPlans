@@ -17,7 +17,7 @@ import std_msgs.msg
 try:
     sys.path.insert(0, os.environ["PNP_HOME"] + '/scripts')
 except:
-    print "Please set PNP_HOME environment variable to PetriNetPlans folder."
+    print("Please set PNP_HOME environment variable to PetriNetPlans folder.")
     sys.exit(1)
 
 import pnp_cmd_base
@@ -137,7 +137,7 @@ class PNPCmd(PNPCmd_Base):
             data = " ".join(["_".join([action, params]), cmd])
         else:
             data = " ".join([action, cmd])
-        print "ACTIONCMD", data
+        print("ACTIONCMD", data)
         self.pub_actioncmd.publish(data)
         # time.sleep(0.5)
 
@@ -148,7 +148,7 @@ class PNPCmd(PNPCmd_Base):
             # print "KEY: ", key
             #print('Action %s status %s' %(action,r))
         except Exception as e:
-            print "action %s status Exception for parameter: %s" %(action,e)
+            print("action %s status Exception for parameter: %s" %(action,e))
             r = ''
         return r
 
@@ -159,7 +159,7 @@ class PNPCmd(PNPCmd_Base):
             # print "KEY: ", key
             #print('Action %s status %s' %(action,r))
         except KeyError as e:
-            print "action %s status KeyError for parameter: %s" %(action,e)
+            print("action %s status KeyError for parameter: %s" %(action,e))
             r = ''
         return r
 
@@ -176,7 +176,7 @@ class PNPCmd(PNPCmd_Base):
             r = service(cond)
             return r.truth_value!=0
         except rospy.ServiceException, e:
-            print "Service call failed: %s"%e
+            print("Service call failed: %s"%e)
             return False
 
     def plan_cmd(self, planname, cmd): # non-blocking

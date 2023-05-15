@@ -24,7 +24,6 @@ class ConditionManager(ConditionListener):
             potential_files += [os.path.join(dirpath, f)
                         for dirpath, _, files in os.walk(conditions_folder, followlinks=True)
                         for f in fnmatch.filter(files, '*.py')]
-        rospy.logwarn("conditions" + str(potential_files))
         for file in potential_files:
         # for file in glob.glob(os.path.join(os.path.dirname(os.path.abspath(__file__)), "*.py")):
 

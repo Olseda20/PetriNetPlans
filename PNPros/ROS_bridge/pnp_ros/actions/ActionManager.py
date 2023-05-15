@@ -42,7 +42,6 @@ class ActionManager():
             potential_files += [os.path.join(dirpath, f)
                     for dirpath, _, files in os.walk(actions_folder, followlinks=True)
                     for f in fnmatch.filter(files, '*.py')]
-        rospy.logwarn("actions" + str(potential_files))
         for file in potential_files:
             module_name = os.path.splitext(os.path.basename(file))[0]
             package_name = os.path.dirname(os.path.relpath(file, directory)).replace("/", ".")
