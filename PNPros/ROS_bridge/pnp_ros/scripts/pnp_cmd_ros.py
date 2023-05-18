@@ -175,7 +175,7 @@ class PNPCmd(PNPCmd_Base):
             service = rospy.ServiceProxy(get_robot_key(SRV_PNPCONDITIONEVAL), pnp_msgs.srv.PNPCondition)
             r = service(cond)
             return r.truth_value!=0
-        except rospy.ServiceException, e:
+        except rospy.ServiceException as e:
             print("Service call failed: %s"%e)
             return False
 
