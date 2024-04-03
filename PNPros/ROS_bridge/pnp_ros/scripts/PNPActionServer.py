@@ -86,6 +86,28 @@ def handle_PNPConditionValue(req):
     else:
         return PNPConditionValueResponse("None")
 
+def get_debug_actions(debug_config_path):
+    # checking if debug file exists 
+    if not os.path.exists(debug_config_path):
+        return {'Debug': False, 'msg': 'Debug file was not found.', 'value': {}}
+    with open(debug_config_path) as f:
+        debug_actions = yaml.safe_load(f) 
+    if debug_actions['Debug']['Active'] is False:
+        return {'Debug': False, 'msg': 'Debug mode is Not active.', 'value': {}}
+    mode = debug_actions['Debug']['Mode']
+    config = debug_actions['Configurations']
+    print('mode', mode)
+    print('config')
+    if mode not in config.keys():
+        return {'Debug': False, 'msg': 'Debug mode is not found in config file.', 'value': {}}
+    print('config[mode]', config[mode])
+    if config[mode]['Active'] in config[mode]:
+        return {'Debug': True, 'msg': 'Debug mode is active.', 'value': {'type':'enable_actions', 'data': config[mode]['Active']}}
+    if config[mode]['Inactive'] in config[mode]:
+        return {'Debug': True, 'msg': 'Debug mode is active.', 'value': {'type':'disable_actions', 'data': config[mode]['Inactive']}}
+    return {'Debug': False, 'msg': 'Debug mode did not find any actions.', 'value': {}}
+
+
 if __name__ == '__main__':
     rospy.init_node(NODE)
     rospy.set_param('robot_name', 'dummy')
@@ -95,6 +117,7 @@ if __name__ == '__main__':
 
     conditionManager = ConditionManager(conditions_folder)
     actionManager = ActionManager(actions_folder)
+    debugConfig = 
 
     # Service which returns truth value of condition
     rospy.Service(SRV_PNPCONDITIONEVAL,
