@@ -181,11 +181,12 @@ class PNPCmd_Base(object):
 
         debug_mode = self.check_action_is_debug_disabled(action)
         print(
-            "%sDebug mode check in exec_action %s%s"
-            % (tcol.WARNING, debug_mode, tcol.ENDC)
+            "%s[DEBUG] mode check in exec_action %s%s"
+            % (tcol.OKBLUE, debug_mode, tcol.ENDC)
         )
         if debug_mode:
-            return print('[DEBUG] PREVENTING ACTION')
+            return print("%s[DEBUG] Preventing Action %s%s"
+            % (tcol.OKBLUE, action, tcol.ENDC))
 
         run = True
 
