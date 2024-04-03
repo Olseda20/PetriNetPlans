@@ -20,7 +20,9 @@ class tcol:
     BOLD = "\033[1m"
     UNDERLINE = "\033[4m"
 
-debug_actions_path = "debug_config.yaml"
+
+debug_actions_path = "lcastor_actions/debug_config.yaml"
+
 
 class PNPCmd_Base(object):
 
@@ -81,6 +83,8 @@ class PNPCmd_Base(object):
 
     def get_debug_actions(self, debug_config_path):
         if not os.path.exists(debug_config_path):
+            print("[DEBUG] file was not found.")
+            print("[DEBUG] current path: ", os.getcwd())
             return {"Debug": False, "msg": "Debug file was not found.", "value": {}}
 
         with open(debug_config_path) as f:
@@ -122,7 +126,11 @@ class PNPCmd_Base(object):
             }
 
         # if no actions are found
-        return {"Debug": False, "msg": "Debug mode did not find any actions.", "value": {}}
+        return {
+            "Debug": False,
+            "msg": "Debug mode did not find any actions.",
+            "value": {},
+        }
 
     def is_debug_action(self, action):
         debug_actions = self.get_debug_actions(debug_actions_path)
@@ -136,37 +144,41 @@ class PNPCmd_Base(object):
 
         if type == "enable":
             if action in actions:
-                return {'type': type, 'mode':mode, 'perform_action': True}
-            return {'type': type, 'mode': mode, 'perform_action': False}
+                return {"type": type, "mode": mode, "perform_action": True}
+            return {"type": type, "mode": mode, "perform_action": False}
 
         if type == "disable":
             if action not in actions:
-                return {'type': type, 'mode': mode, 'perform_action': True}
-            return {'type': type, 'mode':mode, 'perform_action': False}
-        
-        print('Error: Debug mode type not found enable or disable')
+                return {"type": type, "mode": mode, "perform_action": True}
+            return {"type": type, "mode": mode, "perform_action": False}
+
+        print("Error: Debug mode type not found enable or disable")
         return None
-    
+
     def check_action_is_debug_disabled(self, action) -> bool:
         debug_status = self.is_debug_action(action)
+        print(f"[DEBUG] status: {debug_status}")
         if debug_status is not None:
             if debug_status["perform_action"] is False:
-                print(f'Debug mode ({debug_status["mode"]}): action {action} is disabled')
+                print(
+                    f'[DEBUG] mode ({debug_status["mode"]}): action {action} is disabled'
+                )
                 ## RUN ACTION
                 return True
             if debug_status["perform_action"] is True:
-                print(f'Debug mode ({debug_status["mode"]}): action {action} is enabled')
-                return False 
-        return False 
-
+                print(
+                    f'[DEBUG] mode ({debug_status["mode"]}): action {action} is enabled'
+                )
+                return False
+        return False
 
     def exec_action(self, action, params, interrupt="", recovery=""):
         self.printindent()
         print("%sExec: %s %s %s" % (tcol.OKGREEN, action, params, tcol.ENDC))
 
         debug_mode = self.check_action_is_debug_disabled(action)
-        print(f'Debug mode check in exec_action {debug_mode}')
-        
+        print(f"Debug mode check in exec_action {debug_mode}")
+
         run = True
 
         # add the ER
@@ -291,4 +303,3 @@ class PNPCmd_Base(object):
 
     def plan_status(self):
         return "no status"
-
