@@ -83,8 +83,10 @@ class PNPCmd_Base(object):
 
     def get_debug_actions(self, debug_config_path):
         if not os.path.exists(debug_config_path):
-            print("[DEBUG] file was not found.")
-            print("[DEBUG] current path: ", os.getcwd())
+            print("%s[DEBUG] file was not found.%s" % (tcol.OKBLUE, tcol.ENDC))
+            print(
+                "%s[DEBUG] current path: %s%s" % (tcol.OKBLUE, os.getcwd(), tcol.ENDC)
+            )
             return {"Debug": False, "msg": "Debug file was not found.", "value": {}}
 
         with open(debug_config_path) as f:
@@ -152,22 +154,23 @@ class PNPCmd_Base(object):
                 return {"type": type, "mode": mode, "perform_action": True}
             return {"type": type, "mode": mode, "perform_action": False}
 
-        print("Error: Debug mode type not found enable or disable")
+        print("%s%s%s" % (tcol.OKBLUE, "Debug mode check in exec_action", tcol.ENDC))
         return None
 
     def check_action_is_debug_disabled(self, action) -> bool:
         debug_status = self.is_debug_action(action)
-        print(f"[DEBUG] status: {debug_status}")
+        print("%s[DEBUG] status: %s%s" % (tcol.OKBLUE, debug_status, tcol.ENDC))
         if debug_status is not None:
             if debug_status["perform_action"] is False:
                 print(
-                    f'[DEBUG] mode ({debug_status["mode"]}): action {action} is disabled'
+                    "%s[DEBUG] mode (%s): action %s is disabled%s"
+                    % (tcol.OKBLUE, debug_status["mode"], action, tcol.ENDC)
                 )
-                ## RUN ACTION
                 return True
             if debug_status["perform_action"] is True:
                 print(
-                    f'[DEBUG] mode ({debug_status["mode"]}): action {action} is enabled'
+                    "%s[DEBUG] mode (%s): action %s is enabled%s"
+                    % (tcol.OKBLUE, debug_status["mode"], action, tcol.ENDC)
                 )
                 return False
         return False
@@ -177,7 +180,12 @@ class PNPCmd_Base(object):
         print("%sExec: %s %s %s" % (tcol.OKGREEN, action, params, tcol.ENDC))
 
         debug_mode = self.check_action_is_debug_disabled(action)
-        print(f"Debug mode check in exec_action {debug_mode}")
+        print(
+            "%sDebug mode check in exec_action %s%s"
+            % (tcol.WARNING, debug_mode, tcol.ENDC)
+        )
+        if debug_mode:
+            return print('[DEBUG] PREVENTING ACTION')
 
         run = True
 
