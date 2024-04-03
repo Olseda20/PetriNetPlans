@@ -262,17 +262,6 @@ class PNPCmd_Base(object):
         print(oscmd)
         os.system(oscmd)
 
-    def debug_mode_evaluation(self, debug):
-        '''Read the debug yaml file and determine if the action should run or not'''
-        # read debug_config.yaml
-        with open('debug_config.yaml', 'r') as file:
-            debug_config = yaml.load(file, Loader=yaml.FullLoader)
-        if debug_config in debug_config:
-
-        if debug is not in Mode
-
-    # TO BE IMPLEMENTED BY SUBCLASSES
-
     def begin(self):
         pass
 
