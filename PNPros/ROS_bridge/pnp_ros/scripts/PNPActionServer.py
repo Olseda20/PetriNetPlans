@@ -26,9 +26,6 @@ from pnp_msgs.srv import (
     PNPConditionValueResponse,
 )
 
-import yaml
-
-
 import pnp_common
 from pnp_common import *
 
@@ -107,72 +104,21 @@ def handle_PNPConditionValue(req):
         return PNPConditionValueResponse("None")
 
 
-def get_debug_actions(debug_config_path):
-    if not os.path.exists(debug_config_path):
-        return {"Debug": False, "msg": "Debug file was not found.", "value": {}}
-
-    with open(debug_config_path) as f:
-        debug_actions = yaml.safe_load(f)
-
-    if debug_actions["Debug"]["Active"] is False:
-        return {"Debug": False, "msg": "Debug mode is not active", "value": {}}
-
-    mode = debug_actions["Debug"]["Mode"]
-    config = debug_actions["Configurations"]
-
-    if mode not in config.keys():
-        return {
-            "Debug": False,
-            "msg": "Debug mode is not found in configurations",
-            "value": {},
-        }
-
-    if "Active" in config[mode].keys() and config[mode]["Active"] is not None:
-        return {
-            "Debug": True,
-            "msg": "Debug mode active",
-            "value": {
-                "mode": mode,
-                "type": "enable",
-                "actions": config[mode]["Active"],
-            },
-        }
-
-    if "Inactive" in config[mode].keys() and config[mode]["Inactive"] is not None:
-        return {
-            "Debug": True,
-            "msg": "Debug mode active",
-            "value": {
-                "mode": mode,
-                "type": "disable",
-                "actions": config[mode]["Inactive"],
-            },
-        }
-
-    # if no actions are found
-    return {"Debug": False, "msg": "Debug mode did not find any actions.", "value": {}}
-
-
 if __name__ == "__main__":
     rospy.init_node(NODE)
-    rospy.set_param('robot_name', 'dummy')
+    rospy.set_param("robot_name", "dummy")
 
     actions_folder = rospy.get_param("~actions_folder")
     conditions_folder = rospy.get_param("~conditions_folder")
 
     conditionManager = ConditionManager(conditions_folder)
     actionManager = ActionManager(actions_folder)
-    debugConfig =
 
     # Service which returns truth value of condition
-    rospy.Service(SRV_PNPCONDITIONEVAL,
-                  PNPCondition,
-                  handle_PNPConditionEval)
+    rospy.Service(SRV_PNPCONDITIONEVAL, PNPCondition, handle_PNPConditionEval)
 
     # Service which returns value of condition
-    rospy.Service(SRV_PNPCONDITIONVALUE,
-                  PNPConditionValue,
-                  handle_PNPConditionValue)
+    rospy.Service(SRV_PNPCONDITIONVALUE, PNPConditionValue, handle_PNPConditionValue)
 
     PNPActionServer("PNP")
 
