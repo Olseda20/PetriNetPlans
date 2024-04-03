@@ -21,7 +21,7 @@ class tcol:
     UNDERLINE = "\033[4m"
 
 
-debug_actions_path = "lcastor_actions/debug_config.yaml"
+debug_actions_path = "../lcastor_actions/debug_config.yaml"
 
 
 class PNPCmd_Base(object):
