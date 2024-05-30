@@ -42,3 +42,5 @@ At this point, every time PNP receives an event of the form GoTo_instance1_insta
 From this point on, the global variables can be used in the plan (for example in execution nodes, such as in a node called "GoTo_@X_@Y_@Theta.exec").
 
 Finally, to modify the variables' value just reinstantiate them as previously explained.
+
+Test commit

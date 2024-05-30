@@ -109,6 +109,15 @@ class PNPCmd(PNPCmd_Base):
         os._exit(os.EX_OK)
 
     def action_cmd(self,action,params,cmd):
+        debug_mode = self.check_action_is_debug_disabled(action)
+        print(
+            "%s[DEBUG] mode check in action_cmd %s%s"
+            % (tcol.OKBLUE, debug_mode, tcol.ENDC)
+        )
+        if debug_mode:
+            return print("%s[DEBUG] Preventing Action %s%s"
+            % (tcol.OKBLUE, action, tcol.ENDC))
+
         if (cmd=='stop' or cmd=='interrupt'):
             cmd = 'interrupt'
             if action in self._current_actions.keys():

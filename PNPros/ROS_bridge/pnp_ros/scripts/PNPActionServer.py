@@ -3,13 +3,15 @@
 
 import sys
 import os
+
 import roslib
 import rospy
 import actionlib
+
 try:
-    sys.path.append(os.environ["PNP_HOME"] + '/scripts')
-    sys.path.append(os.environ["PNP_HOME"] + '/actions')
-    sys.path.append(os.environ["PNP_HOME"] + '/conditions')
+    sys.path.append(os.environ["PNP_HOME"] + "/scripts")
+    sys.path.append(os.environ["PNP_HOME"] + "/actions")
+    sys.path.append(os.environ["PNP_HOME"] + "/conditions")
 except:
     print("Please set PNP_HOME environment variable to PetriNetPlans folder.")
     sys.exit(1)
@@ -17,16 +19,22 @@ except:
 from ActionManager import ActionManager
 from ConditionManager import ConditionManager
 from pnp_msgs.msg import PNPActionFeedback, PNPResult, PNPAction
-from pnp_msgs.srv import PNPCondition, PNPConditionResponse, PNPConditionValue, PNPConditionValueResponse
+from pnp_msgs.srv import (
+    PNPCondition,
+    PNPConditionResponse,
+    PNPConditionValue,
+    PNPConditionValueResponse,
+)
 
 import pnp_common
 from pnp_common import *
 
-roslib.load_manifest('pnp_ros')
-PKG = 'pnp_ros'
-NODE = 'PNPActionServer'
+roslib.load_manifest("pnp_ros")
+PKG = "pnp_ros"
+NODE = "PNPActionServer"
 conditionManager = None
 actionManager = None
+
 
 class PNPActionServer(object):
     #  create messages that are used to publish feedback/result
@@ -35,32 +43,33 @@ class PNPActionServer(object):
 
     def __init__(self, name):
         self._action_server_name = name
-        self._as = actionlib.ActionServer(self._action_server_name,
-                                          PNPAction,
-                                          self.execute_cb,
-                                          auto_start=False)
+        self._as = actionlib.ActionServer(
+            self._action_server_name, PNPAction, self.execute_cb, auto_start=False
+        )
         self._as.start()
-        rospy.loginfo('%s: Action Server started' % self._action_server_name)
+        rospy.loginfo("%s: Action Server started" % self._action_server_name)
 
     def execute_cb(self, goalhandler):
         r = rospy.Rate(4)
         # init running
-        self._feedback.feedback = 'running...'
+        self._feedback.feedback = "running..."
         goalhandler.publish_feedback(self._feedback)
         goal = goalhandler.get_goal()
 
         # publish info to the console for the user
-        rospy.loginfo('%s: Action %s %s' %
-                      (self._action_server_name, goal.name, goal.params))
-        if goal.function == 'start':
+        rospy.loginfo(
+            "%s: Action %s %s" % (self._action_server_name, goal.name, goal.params)
+        )
+        if goal.function == "start":
             # start executing the action
             actionManager.start_action(goalhandler)
-        elif goal.function == 'interrupt':
+        elif goal.function == "interrupt":
             # print '### Interrupt ',goal.name
             actionManager.interrupt_action(goalhandler)
-        elif goal.function == 'end':
+        elif goal.function == "end":
             # print '### End ',goal.name
             actionManager.end_action(goalhandler)
+
 
 def handle_PNPConditionEval(req):
     cond_elems = req.cond.split("_")
@@ -71,9 +80,17 @@ def handle_PNPConditionEval(req):
     cond_truth_value = conditionManager.evaluate(cond, params)
 
     if cond_truth_value:
-        rospy.loginfo('Eval condition: ' + cond + ' ' + ' '.join(params) + ' value: ' + str(cond_truth_value))
+        rospy.loginfo(
+            "Eval condition: "
+            + cond
+            + " "
+            + " ".join(params)
+            + " value: "
+            + str(cond_truth_value)
+        )
 
     return PNPConditionResponse(cond_truth_value)
+
 
 def handle_PNPConditionValue(req):
     cond = req.cond
@@ -81,14 +98,15 @@ def handle_PNPConditionValue(req):
     cond_value = str(conditionManager.get_value(cond))
 
     if cond_value:
-        #rospy.loginfo('Condition: ' + cond + ' value: ' + cond_value)
+        # rospy.loginfo('Condition: ' + cond + ' value: ' + cond_value)
         return PNPConditionValueResponse(cond_value)
     else:
         return PNPConditionValueResponse("None")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     rospy.init_node(NODE)
-    rospy.set_param('robot_name', 'dummy')
+    rospy.set_param("robot_name", "dummy")
 
     actions_folder = rospy.get_param("~actions_folder")
     conditions_folder = rospy.get_param("~conditions_folder")
@@ -97,14 +115,10 @@ if __name__ == '__main__':
     actionManager = ActionManager(actions_folder)
 
     # Service which returns truth value of condition
-    rospy.Service(SRV_PNPCONDITIONEVAL,
-                  PNPCondition,
-                  handle_PNPConditionEval)
+    rospy.Service(SRV_PNPCONDITIONEVAL, PNPCondition, handle_PNPConditionEval)
 
     # Service which returns value of condition
-    rospy.Service(SRV_PNPCONDITIONVALUE,
-                  PNPConditionValue,
-                  handle_PNPConditionValue)
+    rospy.Service(SRV_PNPCONDITIONVALUE, PNPConditionValue, handle_PNPConditionValue)
 
     PNPActionServer("PNP")
 
